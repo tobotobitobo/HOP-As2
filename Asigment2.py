@@ -8,9 +8,9 @@ import random
 import copy
 
 # 
-with open("HOP-As2/possible_zamestnanci.json") as json1:
+with open("possible_zamestnanci.json") as json1:
     possible_zamestnanci_json = json1.read()
-with open("HOP-As2/formulare_todo.json") as json2:
+with open("formulare_todo.json") as json2:
     formulare_todo_json = json2.read()
 
 
@@ -82,7 +82,7 @@ def randomselect():
         for i in range(0,value):
             random.choice(zamesnanci).docs.append(Job(entry))
     #zaradom idem po vsetkych joboch a priradzujem ich random zamesnancovy zaroven vytvaram instancie joboch
-    writedoc(zamesnanci, "HOP-As2/output.csv")
+    writedoc(zamesnanci, "output.csv")
     #vypisem vsetko do csv filu ako ID + joby ktore ma priradene
     return zamesnanci
 
@@ -107,8 +107,8 @@ def switch(zamestnanci):
 
     
 solution = Solution(randomselect())
-writedoc(solution.zamesnanci, "HOP-As2/output.csv")
-evaluate('HOP-As2/output2.csv')
+writedoc(solution.zamesnanci, "output.csv")
+evaluate('output2.csv')
 evaluatefromlist(solution.zamesnanci)
 for i in range(0,2000):
     newsolution = Solution(copy.deepcopy(solution.zamesnanci))
@@ -117,5 +117,5 @@ for i in range(0,2000):
         solution.zamesnanci = copy.deepcopy(newsolution.zamesnanci)
         
     print(evaluatefromlist(solution.zamesnanci))
-writedoc(solution.zamesnanci, "HOP-As2/output2.csv")
-evaluate("HOP-As2/output2.csv")
+writedoc(solution.zamesnanci, "output2.csv")
+evaluate("output2.csv")

@@ -5,7 +5,7 @@ class Zamestnanec:
     def __init__(self,ID):
         self.docs = []
         self.ID = ID
-        with open("HOP-As2/possible_zamestnanci.json") as json1:
+        with open("possible_zamestnanci.json") as json1:
             possible_zamestnanci_json = json1.read()
         possible_zamestnanci = json.loads(possible_zamestnanci_json)
         self.speed =  possible_zamestnanci[ID]
