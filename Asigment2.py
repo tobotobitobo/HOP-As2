@@ -68,7 +68,7 @@ def evaluatefromlist(zamestnanci):
     # print("zaplatil si " + str(num_of_hours * 30))
     # print("najpomalsi cas je " + str(slowest) + " ")
 
-    return slowest
+    return slowest+0.1*celkovy_cas
     
 
 def randomselect():
@@ -108,14 +108,22 @@ def switch(zamestnanci):
     
 solution = Solution(randomselect())
 writedoc(solution.zamesnanci, "output.csv")
-evaluate('output2.csv')
-evaluatefromlist(solution.zamesnanci)
-for i in range(0,2000):
+T = 1
+i = 0
+while(T > 0.01 or i < 5000):
     newsolution = Solution(copy.deepcopy(solution.zamesnanci))
     switch(newsolution.zamesnanci)
-    if(evaluatefromlist(newsolution.zamesnanci) < evaluatefromlist(solution.zamesnanci)):
+    # print("solution" + str(evaluatefromlist(solution.zamesnanci)))
+    # print("newsolution " + str(evaluatefromlist(newsolution.zamesnanci)))
+    # print(" ")
+    if(evaluatefromlist(newsolution.zamesnanci) <= evaluatefromlist(solution.zamesnanci)):
         solution.zamesnanci = copy.deepcopy(newsolution.zamesnanci)
-        
+    ap = math.exp((evaluatefromlist(solution.zamesnanci) - evaluatefromlist(newsolution.zamesnanci))/T)
+    if( ap > random.uniform(0, 1)):
+        solution.zamesnanci = copy.deepcopy(newsolution.zamesnanci)
+    T *= 0.999
+    i += 1
     print(evaluatefromlist(solution.zamesnanci))
 writedoc(solution.zamesnanci, "output2.csv")
+
 evaluate("output2.csv")
