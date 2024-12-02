@@ -1,36 +1,23 @@
 import json
 import csv
 import math
-from zmaestnanec import Zameamestnanec
+from zamestnanec import Zamestnanec
 from job import Job
+from solution import Solution
 import random
+import copy
 
 # 
-with open('possible_zamestnanci.json') as json1:
+with open("HOP-As2/possible_zamestnanci.json") as json1:
     possible_zamestnanci_json = json1.read()
-with open('formulare_todo.json') as json2:
+with open("HOP-As2/formulare_todo.json") as json2:
     formulare_todo_json = json2.read()
 
-lsit = []
 
 
 
 possible_zamestnanci = json.loads(possible_zamestnanci_json)
 formulare_todo = json.loads(formulare_todo_json)
-
-# dict_list = list(formulare_todo.keys())
-# print(dict_list)
-
-# zam_dict = {}
-# for caunt, zam in enumerate(possible_zamestnanci):
-#     zam_dict[caunt] = 0
-#     for doc in dict_list:
-#         if(doc in list(zam.keys())):
-#             zam_dict[caunt] = zam_dict[caunt] + (5-zam[doc])
-#         else:
-#            zam_dict[caunt] += 5
-# print(zam_dict)
-# tobiasov bs
 
 def evaluate(filename):
     with open(filename) as csvfile:
@@ -42,6 +29,7 @@ def evaluate(filename):
             tipek = {"zam_id": output_line[0],
                     "zamestnanec": possible_zamestnanci[int(output_line[0])],
                     "celkovy cas": 0}
+            
             
             # efficiency = 1
 
@@ -64,32 +52,48 @@ def evaluate(filename):
         print("najpomalsi cas je " + str(slowest) + " ")
 
         return num_of_hours, slowest
+
+def evaluatefromlist(zamestnanci):
+    
+    slowest = 0
+    num_of_hours = 0
+    celkovy_cas = 0
+    for zamestnanec in zamestnanci:
+        zamestnanec.sort()
+        cas = zamestnanec.gettotalspeed()
+        if cas > slowest:
+            slowest = cas
+        celkovy_cas += cas
+        num_of_hours += math.ceil(cas/60)
+    # print("zaplatil si " + str(num_of_hours * 30))
+    # print("najpomalsi cas je " + str(slowest) + " ")
+
+    return slowest
     
 
 def randomselect():
-    
     zamesnanci = []
 
     for i,entry in enumerate(possible_zamestnanci):
-        zamesnanci.append(Zameamestnanec(i))
-
+        zamesnanci.append(Zamestnanec(i))
+    #vitvorim list zamesnancov a taktiez instancie zamesnancov 
 
     for entry,value in formulare_todo.items():
         for i in range(0,value):
             random.choice(zamesnanci).docs.append(Job(entry))
-    with open('output2.csv', 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile)
-        for zamestnanec in zamesnanci:
-            writer.writerow([zamestnanec.ID] + zamestnanec.listofnames())
-            
-    for i in range(0,200):
-        switch(zamesnanci)
-
-    with open('output.csv', 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile)
-        for zamestnanec in zamesnanci:
-            writer.writerow([zamestnanec.ID] + zamestnanec.listofnames())
+    #zaradom idem po vsetkych joboch a priradzujem ich random zamesnancovy zaroven vytvaram instancie joboch
+    writedoc(zamesnanci, "HOP-As2/output.csv")
+    #vypisem vsetko do csv filu ako ID + joby ktore ma priradene
     return zamesnanci
+
+
+
+def writedoc(zamesnanci,filename):
+        with open(filename, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            for zamestnanec in zamesnanci:
+                writer.writerow([zamestnanec.ID] + zamestnanec.listofnames())
+
 
 def switch(zamestnanci):
     targeted_zamestnanec = random.choice(zamestnanci)
@@ -98,7 +102,20 @@ def switch(zamestnanci):
         targeted_zamestnanec.docs.remove(job_to_switch)
         targeted_zamestnanec2 = random.choice(zamestnanci)
         targeted_zamestnanec2.docs.append(job_to_switch)
+    #zoberiem job zamesnancovy a pridam ho inemu zamesnancovy aka zmenim zamesnanca pri jobe...
+    return zamestnanci
 
-
-randomselect()
-evaluate('output.csv')
+    
+solution = Solution(randomselect())
+writedoc(solution.zamesnanci, "HOP-As2/output.csv")
+evaluate('HOP-As2/output2.csv')
+evaluatefromlist(solution.zamesnanci)
+for i in range(0,2000):
+    newsolution = Solution(copy.deepcopy(solution.zamesnanci))
+    switch(newsolution.zamesnanci)
+    if(evaluatefromlist(newsolution.zamesnanci) < evaluatefromlist(solution.zamesnanci)):
+        solution.zamesnanci = copy.deepcopy(newsolution.zamesnanci)
+        
+    print(evaluatefromlist(solution.zamesnanci))
+writedoc(solution.zamesnanci, "HOP-As2/output2.csv")
+evaluate("HOP-As2/output2.csv")
