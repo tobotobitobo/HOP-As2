@@ -58,6 +58,7 @@ def evaluatefromlist(zamestnanci):
     slowest = 0
     num_of_hours = 0
     celkovy_cas = 0
+    hour_overflow_index = 0
     for zamestnanec in zamestnanci:
         zamestnanec.sort()
         cas = zamestnanec.gettotalspeed()
@@ -65,10 +66,12 @@ def evaluatefromlist(zamestnanci):
             slowest = cas
         celkovy_cas += cas
         num_of_hours += math.ceil(cas/60)
+        overflow = cas%60
+        hour_overflow_index = 
     # print("zaplatil si " + str(num_of_hours * 30))
     # print("najpomalsi cas je " + str(slowest) + " ")
 
-    return slowest+0.1*celkovy_cas
+    return slowest+0.4*celkovy_cas+num_of_hours+
     
 
 def randomselect():
@@ -110,7 +113,7 @@ solution = Solution(randomselect())
 writedoc(solution.zamesnanci, "output.csv")
 T = 1
 i = 0
-while(T > 0.01 or i < 5000):
+while(T > 0.01):
     newsolution = Solution(copy.deepcopy(solution.zamesnanci))
     switch(newsolution.zamesnanci)
     # print("solution" + str(evaluatefromlist(solution.zamesnanci)))
@@ -118,12 +121,13 @@ while(T > 0.01 or i < 5000):
     # print(" ")
     if(evaluatefromlist(newsolution.zamesnanci) <= evaluatefromlist(solution.zamesnanci)):
         solution.zamesnanci = copy.deepcopy(newsolution.zamesnanci)
+        continue
     ap = math.exp((evaluatefromlist(solution.zamesnanci) - evaluatefromlist(newsolution.zamesnanci))/T)
-    if( ap > random.uniform(0, 1)):
+    if(ap > random.uniform(0, 1)):
         solution.zamesnanci = copy.deepcopy(newsolution.zamesnanci)
-    T *= 0.999
+    T *= 0.9992
     i += 1
-    print(evaluatefromlist(solution.zamesnanci))
-writedoc(solution.zamesnanci, "output2.csv")
+    print(f'{T:0.4f}', evaluatefromlist(solution.zamesnanci))
+    writedoc(solution.zamesnanci, "output2.csv")
 
 evaluate("output2.csv")
