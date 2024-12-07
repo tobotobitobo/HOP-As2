@@ -1,0 +1,31 @@
+{
+    "CLI-989": 100,
+    "OPT-451": 150,
+    "IRV-843": 250
+}
+
+T < 0.01
+T= T*0.999
+
+slowest + celkovy_cas +num_of_hours*n
+celkovy hours je 505.5
+celkovy slowest je 123.58874999999998
+celkovy time je 922.1162499999998
+
+celkovy hours je 537.0
+celkovy slowest je 101.39999999999999
+celkovy time je 908.9074999999999
+
+celkovy_cas +num_of_hours*n
+celkovy hours je 491.25
+celkovy slowest je 178.8025
+celkovy time je 891.7112499999997
+
+slowest + celkovy_cas/n +num_of_hours*n
+celkovy hours je 755.25
+celkovy slowest je 97.59
+celkovy time je 1175.9262499999995
+
+celkovy hours je 600.0
+celkovy slowest je 147.74999999999997
+celkovy time je 1161.7

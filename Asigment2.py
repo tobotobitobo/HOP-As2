@@ -7,17 +7,6 @@ from solution import Solution
 import random
 import copy
 
-# 
-with open("possible_zamestnanci.json") as json1:
-    possible_zamestnanci_json = json1.read()
-with open("formulare_todo.json") as json2:
-    formulare_todo_json = json2.read()
-
-
-
-
-possible_zamestnanci = json.loads(possible_zamestnanci_json)
-formulare_todo = json.loads(formulare_todo_json)
 
 def evaluate(filename):
     with open(filename) as csvfile:
@@ -30,8 +19,7 @@ def evaluate(filename):
             tipek = {"zam_id": output_line[0],
                     "zamestnanec": possible_zamestnanci[int(output_line[0])],
                     "celkovy cas": 0}
-            
-            
+        
             # efficiency = 1
 
             for i, formular in enumerate(output_line[1:], 1):
@@ -45,97 +33,87 @@ def evaluate(filename):
                     tipek['celkovy cas'] += tipek['zamestnanec'][formular] * efficiency
                 else:
                     tipek['celkovy cas'] += 5 * efficiency
-            #print(tipek)
+
+            print(tipek)
             cas += tipek['celkovy cas']
             if tipek['celkovy cas'] > slowest:
                 slowest = tipek['celkovy cas']
+
             num_of_hours += math.ceil(tipek['celkovy cas']/60)
+        print("")
         print("zaplatil si " + str(num_of_hours * 30))
         print("najpomalsi cas je " + str(slowest) + " ")
         print("celkovy cas je" + str(cas) + " ")
 
-        return num_of_hours, slowest
+        return num_of_hours*30, slowest, cas
 
-# overlambda = lambda x: 0 if x==0 else 60-x
 
-def evaluatefromlist(zamestnanci):
-    slowest = 0
-    num_of_hours = 0
-    celkovy_cas = 0
-    # hour_overflow_index = 0
-    for zamestnanec in zamestnanci:
-        zamestnanec.sort()
-        cas = zamestnanec.gettotalspeed()
-        if cas > slowest:
-            slowest = cas
-        celkovy_cas += cas
-        num_of_hours += math.ceil(cas/60)
-        # overflow = cas%60
-        # hour_overflow_index += overlambda(cas%60)
-    # print("zaplatil si " + str(num_of_hours * 30))
-    # print("najpomalsi cas je " + str(slowest) + " ")
 
-    return slowest + celkovy_cas+num_of_hours*10 #+hour_overflow_index*10, 
-    
-
-def randomselect():
+def selectWorkers(possible_zamestnanci):
     zamesnanci = []
-
-    for i,entry in enumerate(possible_zamestnanci):
+    for i, entry in enumerate(possible_zamestnanci):
         zamesnanci.append(Zamestnanec(i))
-    #vitvorim list zamesnancov a taktiez instancie zamesnancov 
+        if entry and any(key in formulare_todo for key in entry):
+            zamesnanci[i].usefull = True
 
+    return zamesnanci
+
+def notRandomSelect(formulare_todo,possible_zamestnanci):
+    zamesnanci = selectWorkers(possible_zamestnanci)
+    joblist = []
     for entry,value in formulare_todo.items():
         for i in range(0,value):
-            random.choice(zamesnanci).docs.append(Job(entry))
-    #zaradom idem po vsetkych joboch a priradzujem ich random zamesnancovy zaroven vytvaram instancie joboch
-    writedoc(zamesnanci, "output.csv")
-    #vypisem vsetko do csv filu ako ID + joby ktore ma priradene
+            job = Job(entry)
+            job.setpropability(zamesnanci)
+            joblist.append(job)
+
+    for job in joblist:
+        weight = list(job.getPropability().values())
+        zam = random.choices(zamesnanci,weights=weight, k=1)[0]
+        zam.dictdoc[job.nameofdoc()] += 1
+
     return zamesnanci
 
 
-
-def writedoc(zamesnanci,filename):
+def writedoc(zamestnanci,filename):
         with open(filename, 'w', newline='') as csvfile:
             writer = csv.writer(csvfile)
-            for zamestnanec in zamesnanci:
-                writer.writerow([zamestnanec.ID] + zamestnanec.listofnames())
+            for zamestnanec in zamestnanci:
+                if(len(zamestnanec.listofnames()) > 0):
+                    writer.writerow([zamestnanec.ID] + zamestnanec.listofnames())
 
+def load_data(possible_zamestnanci,formulare_todo):
+    with open(possible_zamestnanci) as json1:
+        possible_zamestnanci_json = json1.read()
 
-def switch(zamestnanci):
-    targeted_zamestnanec = random.choice(zamestnanci)
-    if len(targeted_zamestnanec.docs) != 0: 
-        job_to_switch = random.choice(targeted_zamestnanec.docs)
-        targeted_zamestnanec.docs.remove(job_to_switch)
-        targeted_zamestnanec2 = random.choice(zamestnanci)
-        targeted_zamestnanec2.docs.append(job_to_switch)
-    #zoberiem job zamesnancovy a pridam ho inemu zamesnancovy aka zmenim zamesnanca pri jobe...
-    return zamestnanci
+    with open(formulare_todo) as json2:
+        formulare_todo_json = json2.read()
 
-for i in range(0,10):
-    
-    solution = Solution(randomselect())
-    writedoc(solution.zamesnanci, "output.csv")
-    T = 1
-    i = 0
-    while(T > 0.01):
-        newsolution = Solution(copy.deepcopy(solution.zamesnanci))
-        switch(newsolution.zamesnanci)
-        # print("solution" + str(evaluatefromlist(solution.zamesnanci)))
-        # print("newsolution " + str(evaluatefromlist(newsolution.zamesnanci)))
-        # print(" ")
-        if(evaluatefromlist(newsolution.zamesnanci) <= evaluatefromlist(solution.zamesnanci)):
+    return json.loads(possible_zamestnanci_json), json.loads(formulare_todo_json)
+
+def simulated_aneling(T,alpha,limit,output,possible_zamestnanci,formulare_todo,slowest_weight,total_time_weight,hours_weight):
+    solution = Solution(notRandomSelect(formulare_todo,possible_zamestnanci))
+    while(T > limit):
+        newsolution = Solution(copy.deepcopy(solution.get_zamestnanci()))
+        newsolution = newsolution.get_neighbour()
+        if(newsolution.evaluatefromlist(slowest_weight,total_time_weight,hours_weight) <= solution.evaluatefromlist(slowest_weight,total_time_weight,hours_weight)):
             solution = newsolution
-            # T *= 1.05
             continue
-        ap = math.exp((evaluatefromlist(solution.zamesnanci) - evaluatefromlist(newsolution.zamesnanci))/T)
+
+        ap = math.exp((solution.evaluatefromlist(slowest_weight,total_time_weight,hours_weight) - newsolution.evaluatefromlist(slowest_weight,total_time_weight,hours_weight))/T)
         if(ap > random.uniform(0, 1)):
             solution = newsolution
-        T *= 0.995
-        i += 1
-        #print(f'{T:0.4f}', evaluatefromlist(solution.zamesnanci))
 
-    writedoc(solution.zamesnanci, "output2.csv")
+        T *= alpha
+        print(f'{T:0.4f}', solution.evaluatefromlist(slowest_weight,total_time_weight,hours_weight))
 
-    evaluate("output2.csv")
-    print("")
+    writedoc(solution.get_zamestnanci(), output)
+    evaluate(output)
+
+
+slowest_weight = 1
+total_time_weight = 1
+hours_weight = 1
+possible_zamestnanci,formulare_todo = load_data("possible_zamestnanci.json", "formulare_todo.json")
+simulated_aneling(1,0.999,0.01,"output.csv",possible_zamestnanci,formulare_todo,slowest_weight,total_time_weight,hours_weight)
+
