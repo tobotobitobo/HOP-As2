@@ -59,14 +59,17 @@ def selectWorkers(possible_zamestnanci):
     return zamesnanci
 
 def notRandomSelect(formulare_todo,possible_zamestnanci):
+    #vyberu sa zamestnanci
     zamesnanci = selectWorkers(possible_zamestnanci)
     joblist = []
+    #inicializacia kazdeho jobu + vytvorenie pravdepodobnosti s ktorimi sa budu davat zamestnancom
     for entry,value in formulare_todo.items():
         for i in range(0,value):
             job = Job(entry)
             job.setpropability(zamesnanci)
             joblist.append(job)
 
+    #s danov pravdepodobnostov sa da job zamestnancovy
     for job in joblist:
         weight = list(job.getPropability().values())
         zam = random.choices(zamesnanci,weights=weight, k=1)[0]

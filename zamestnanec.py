@@ -52,6 +52,8 @@ class Zamestnanec:
     
     def plus_doc(self,keyname):
         self.dictdoc[keyname] += 1
+    def minus_doc(self,keyname):
+        self.dictdoc[keyname] -= 1
 
             
  
