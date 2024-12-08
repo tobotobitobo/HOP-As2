@@ -15,7 +15,7 @@ pre spustenie programu použite command:
 python .\Asigment2.py
 ```
 
-imnput môžete zmeniť v súboroch[formulare_todo.json](formulare_todo.json) a [possible_zamestnanci.json](possible_zamestnanci.json)
+input môžete zmeniť v súboroch[formulare_todo.json](formulare_todo.json) a [possible_zamestnanci.json](possible_zamestnanci.json)
 
 
 Output sa ukladá do súboru [output.csv](output.csv)
