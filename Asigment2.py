@@ -132,9 +132,12 @@ def simulated_aneling(T,alpha,limit,output,possible_zamestnanci,formulare_todo,s
     evaluate(output)
 
 #nastavenie hodnôt a spustenie nášho algoritmu
-slowest_weight = 1
-total_time_weight = 1
-hours_weight = 1
+slowest_weight = 1 #weights
+total_time_weight = 0.4
+hours_weight = 10
+teplota = 1 # teplota od ktorej začíname
+alpha = 0.999 #každu iteráciu klesne teplota o
+limit = 0.01 #limit na zastavenie programu
 possible_zamestnanci,formulare_todo = load_data("possible_zamestnanci.json", "formulare_todo.json")
-simulated_aneling(1,0.999,0.01,"output.csv",possible_zamestnanci,formulare_todo,slowest_weight,total_time_weight,hours_weight)
+simulated_aneling(teplota,alpha,limit,"output.csv",possible_zamestnanci,formulare_todo,slowest_weight,total_time_weight,hours_weight)
 

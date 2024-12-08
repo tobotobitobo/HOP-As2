@@ -43,5 +43,6 @@ class Solution:
         for a in self.zamestnanci:
             if (a.sum_of_docs() > 0):
                 n+=1
-
-        return slowest*slowest_weight + celkovy_cas/n*totaltime_weight +num_of_hours*n*hours_weight
+        awg_time = celkovy_cas/n
+        delta_time = slowest - awg_time
+        return slowest*slowest_weight + celkovy_cas*totaltime_weight +num_of_hours*hours_weight
