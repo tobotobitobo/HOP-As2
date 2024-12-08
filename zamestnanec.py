@@ -2,6 +2,7 @@ import json
 import random
 
 class Zamestnanec:
+    #v konštrukture načítavame vstupy-zamestnacov a formulárov
     def __init__(self,ID):
         self.dictdoc = {}
         inputformulare="formulare_todo.json"

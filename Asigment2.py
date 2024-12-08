@@ -9,6 +9,7 @@ import copy
 
 #tato funkcia je len za kontrolovanie a zobrazenie vysledkov nijako nepomaha v programe
 def evaluate(filename):
+    #vďaka  tejto metóde okrem csv outputu vypíšeme info k nášmu riešeniu do konzoly
     with open(filename) as csvfile:
         output_to_check = csv.reader(csvfile)
         slowest = 0
