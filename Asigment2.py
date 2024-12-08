@@ -7,7 +7,7 @@ from solution import Solution
 import random
 import copy
 
-
+#tato funkcia je len za kontrolovanie a zobrazenie vysledkov nijako nepomaha v programe
 def evaluate(filename):
     with open(filename) as csvfile:
         output_to_check = csv.reader(csvfile)
@@ -19,8 +19,7 @@ def evaluate(filename):
             tipek = {"zam_id": output_line[0],
                     "zamestnanec": possible_zamestnanci[int(output_line[0])],
                     "celkovy cas": 0}
-        
-            # efficiency = 1
+            #dictionary so vsetkymi zamestnancamy
 
             for i, formular in enumerate(output_line[1:], 1):
                 if output_line[i-1] == formular:
@@ -34,6 +33,7 @@ def evaluate(filename):
                     tipek['celkovy cas'] += tipek['zamestnanec'][formular] * efficiency
                 else:
                     tipek['celkovy cas'] += 5 * efficiency
+                    #vypocitanie casu pre jedneho zamestnanca
 
             print(tipek)
             cas += tipek['celkovy cas']
@@ -41,6 +41,7 @@ def evaluate(filename):
                 slowest = tipek['celkovy cas']
 
             num_of_hours += math.ceil(tipek['celkovy cas']/60)
+            #vypocitanie mzdy
         print("")
         print("zaplatil si " + str(num_of_hours * 30))
         print("najpomalsi cas je " + str(slowest) + " ")
@@ -51,7 +52,7 @@ def evaluate(filename):
 
 
 def selectWorkers(possible_zamestnanci):
-    #vyberie vhodných zamestancov a vracia ich ako list
+    #vyberie zamestancov a vracia ich ako list
     zamesnanci = []
     for i, entry in enumerate(possible_zamestnanci):
         zamesnanci.append(Zamestnanec(i))
@@ -107,7 +108,7 @@ def load_data(possible_zamestnanci,formulare_todo):
     return json.loads(possible_zamestnanci_json), json.loads(formulare_todo_json)
 
 def simulated_aneling(T,alpha,limit,output,possible_zamestnanci,formulare_todo,slowest_weight,total_time_weight,hours_weight):
-    #vyberie jedno riešenie nie náhodne
+    #vytvory prvotne riesenie
     solution = Solution(notRandomSelect(formulare_todo,possible_zamestnanci))
     #pokiaľ T je väčšie ako náš limit ,skúšame nové riešenie a vyhodnocujeme ho
     while(T > limit):

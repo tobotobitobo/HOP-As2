@@ -27,7 +27,7 @@ class Solution:
         return self
     
     def evaluatefromlist(self,slowest_weight,totaltime_weight,hours_weight):
-        #táto funkcia vyhodnocuje efektivitu skupiny zamestnancov na základe času
+        #táto funkcia vyhodnocuje celkovu efektivitu riesenia a vracia hodnotu nasej ohodnocovacej funkcie
         slowest = 0
         num_of_hours = 0
         celkovy_cas = 0
