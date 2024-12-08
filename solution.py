@@ -10,15 +10,24 @@ class Solution:
         return self.zamestnanci
     
     def get_neighbour(self):
+        # v tejto metóde najprv vyberieme náhodneho zamestanca
+        #pozrieme či spracovával nejaký dokument
+        #tak sa vyberie druhy náhodny zamestnanec
+        # prvému sa odoberie dokument a druhému sa pridá
         targeted_zamestnanec = random.choice(self.zamestnanci)
         if targeted_zamestnanec.sum_of_docs() != 0:
             job_to_switch = targeted_zamestnanec.getRandomKey()
-            targeted_zamestnanec2.minus_doc(job_to_switch)
+            targeted_zamestnanec.minus_doc(job_to_switch)
+            #zabezpečenie aby sa sa nevygeneroval ten istý zamestanec/úradník
             targeted_zamestnanec2 = random.choice(self.zamestnanci)
-            targeted_zamestnanec2.plus_doc(job_to_switch)
+            while(targeted_zamestnanec==targeted_zamestnanec2):
+                targeted_zamestnanec2 = random.choice(self.zamestnanci)
+            if targeted_zamestnanec!=targeted_zamestnanec2:
+                targeted_zamestnanec2.plus_doc(job_to_switch)
         return self
     
     def evaluatefromlist(self,slowest_weight,totaltime_weight,hours_weight):
+        #táto funkcia vyhodnocuje efektivitu skupiny zamestnancov na základe času
         slowest = 0
         num_of_hours = 0
         celkovy_cas = 0
@@ -34,4 +43,5 @@ class Solution:
         for a in self.zamestnanci:
             if (a.sum_of_docs() > 0):
                 n+=1
+
         return slowest*slowest_weight + celkovy_cas/n*totaltime_weight +num_of_hours*n*hours_weight
