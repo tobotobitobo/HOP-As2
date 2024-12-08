@@ -1,13 +1,13 @@
 # HOP-As2
-Tento kód bol robený na verzii python 3.11.9 a s touto verziou odporúčame pracovat
+Tento kód bol robený na verzii python 3.11.9 a s touto verziou odporúčame pracovať
  
- naklonujte si tento git do svojho prie4inka pomocu:
+ naklonujte si tento git do svojho priečinka pomocu:
 
 ```
 git clone https://github.com/tobotobitobo/HOP-As2.git
 ```
 
-Všetky knižnice sú butlt in knižnice v pythone cize nepotrebujete si nič sťahovat.
+Všetky knižnice sú butlt in knižnice v pythone čiže nepotrebujete si nič sťahovať.
 
 pre spustenie programu použite command:
 
@@ -15,7 +15,7 @@ pre spustenie programu použite command:
 python .\Asigment2.py
 ```
 
-imput môžete zmeniť v súboroch[formulare_todo.json](formulare_todo.json) a [possible_zamestnanci.json](possible_zamestnanci.json)
+imnput môžete zmeniť v súboroch[formulare_todo.json](formulare_todo.json) a [possible_zamestnanci.json](possible_zamestnanci.json)
 
 
 Output sa ukladá do súboru [output.csv](output.csv)
